@@ -9,12 +9,22 @@ const getRandomPosition = () => ({
   y: Math.floor(Math.random() * BOARD_SIZE),
 });
 
-const GameBoard = () => {
+const GameBoard = ({ resetFlag }) => {
   const [snake, setSnake] = useState(INITIAL_SNAKE);
   const [direction, setDirection] = useState(INITIAL_DIRECTION);
   const [food, setFood] = useState(getRandomPosition());
   const [score, setScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
   const boardRef = useRef(null);
+
+  // ✅ Reset effect when resetFlag changes
+  useEffect(() => {
+    setSnake(INITIAL_SNAKE);
+    setDirection(INITIAL_DIRECTION);
+    setFood(getRandomPosition());
+    setScore(0);
+    setIsGameOver(false);
+  }, [resetFlag]);
 
   const moveSnake = () => {
     setSnake((prev) => {
@@ -28,6 +38,15 @@ const GameBoard = () => {
       const newSnake = hasEatenFood
         ? [newHead, ...prev]
         : [newHead, ...prev.slice(0, -1)];
+
+      const isColliding = newSnake
+        .slice(1)
+        .some((segment) => segment.x === newHead.x && segment.y === newHead.y);
+
+      if (isColliding) {
+        setIsGameOver(true);
+        return prev;
+      }
 
       if (hasEatenFood) {
         setFood(getRandomPosition());
@@ -58,39 +77,56 @@ const GameBoard = () => {
   }, []);
 
   useEffect(() => {
+    if (isGameOver) return;
     const interval = setInterval(moveSnake, 150);
     return () => clearInterval(interval);
-  }, [direction]);
+  }, [direction, isGameOver]);
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      {/* Score Display */}
       <div className="text-white font-jersey text-xl">Score: {score}</div>
 
-      {/* Game Board */}
-      <div
-        ref={boardRef}
-        className="grid grid-cols-20 grid-rows-20 w-[80vmin] h-[80vmin] bg-neutral-900 border-4 border-neutral-700"
-      >
-        {[...Array(BOARD_SIZE * BOARD_SIZE)].map((_, i) => {
-          const x = i % BOARD_SIZE;
-          const y = Math.floor(i / BOARD_SIZE);
+      <div className="relative">
+        {/* Game Board */}
+        <div
+          ref={boardRef}
+          className="grid grid-cols-20 grid-rows-20 w-[80vmin] h-[80vmin] bg-neutral-900 border-4 border-neutral-700"
+        >
+          {[...Array(BOARD_SIZE * BOARD_SIZE)].map((_, i) => {
+            const x = i % BOARD_SIZE;
+            const y = Math.floor(i / BOARD_SIZE);
 
-          const isSnake = snake.some((s) => s.x === x && s.y === y);
-          const isFood = food.x === x && food.y === y;
+            const isSnake = snake.some((s) => s.x === x && s.y === y);
+            const isFood = food.x === x && food.y === y;
 
-          return (
-            <div
-              key={i}
-              className={`w-full h-full ${
-                isSnake ? "bg-white rounded-full" : isFood ? "bg-red-600 rounded-full" : "bg-neutral-900"
-              }`}
-            />
-          );
-        })}
+            return (
+              <div
+                key={i}
+                className={`w-full h-full ${
+                  isSnake
+                    ? "bg-white rounded-full"
+                    : isFood
+                    ? "bg-red-600 rounded-full"
+                    : "bg-neutral-900"
+                }`}
+              />
+            );
+          })}
+        </div>
+
+        {/* Game Over Overlay */}
+        {isGameOver && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+            <div className="bg-red-600 text-white text-3xl px-6 py-4 font-jersey">
+              Game Over
+            </div>
+            
+          </div>
+        )}
       </div>
     </div>
   );
+  
 };
 
 export default GameBoard;

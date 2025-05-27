@@ -1,10 +1,18 @@
+import { useState } from "react";
 import GameBoard from "./GameBoard";
 import { GithubLogo } from "@phosphor-icons/react";
 
 function App() {
+  const [resetFlag, setResetFlag] = useState(false);
+
+  const handleRestart = () => {
+    // Toggle the reset flag to trigger reset useEffect inside GameBoard
+    setResetFlag((prev) => !prev);
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-6">
-      <navbar className="w-full flex items-center justify-between px-12 py-4 bg-black">
+      <nav className="w-full flex items-center justify-between px-12 py-4 bg-black">
         <a
           href="https://github.com/hemanthk04/snakegame"
           target="_blank"
@@ -13,15 +21,20 @@ function App() {
         >
           <GithubLogo size={32} weight="fill" />
         </a>
-        {/* Heading Text */}
+
         <h1 className="font-jersey text-white text-4xl sm:text-5xl">
           Snake Game
         </h1>
-        <div className="w-[28px]">hello</div>
-      </navbar>
 
-      {/* Game Board */}
-      <GameBoard />
+        <button
+          onClick={handleRestart}
+          className="px-6 cursor-pointer py-2 bg-white text-black font-semibold rounded-full font-instrument hover:scale-105 transition"
+        >
+          Restart
+        </button>
+      </nav>
+
+      <GameBoard resetFlag={resetFlag} />
     </div>
   );
 }
