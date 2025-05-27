@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.font-jersey {
+  font-family: "Jersey 15", cursive;
+}
