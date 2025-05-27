@@ -83,7 +83,7 @@ const GameBoard = () => {
             <div
               key={i}
               className={`w-full h-full ${
-                isSnake ? "bg-white" : isFood ? "bg-red-500" : "bg-neutral-900"
+                isSnake ? "bg-white rounded-full" : isFood ? "bg-red-600 rounded-full" : "bg-neutral-900"
               }`}
             />
           );
