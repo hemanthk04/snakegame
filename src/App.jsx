@@ -9,7 +9,7 @@ function App() {
           href="https://github.com/hemanthk04/snakegame"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white hover:text-gray-300"
+          className="text-white hover:scale-115 transition-all duration-300"
         >
           <GithubLogo size={32} weight="fill" />
         </a>
