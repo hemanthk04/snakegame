@@ -3,7 +3,7 @@ import { GithubLogo } from "@phosphor-icons/react";
 
 function App() {
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-8">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-6">
       <navbar className="w-full flex items-center justify-between px-12 py-4 bg-black">
         <a
           href="https://github.com/hemanthk04/snakegame"
