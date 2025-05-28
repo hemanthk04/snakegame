@@ -16,8 +16,9 @@ const GameBoard = ({ resetFlag }) => {
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const boardRef = useRef(null);
+  const lastTouchRef = useRef({ x: 0, y: 0 });
 
-  // ✅ Reset effect when resetFlag changes
+  // ✅ Reset effect
   useEffect(() => {
     setSnake(INITIAL_SNAKE);
     setDirection(INITIAL_DIRECTION);
@@ -68,13 +69,52 @@ const GameBoard = ({ resetFlag }) => {
       a: { x: -1, y: 0 },
       d: { x: 1, y: 0 },
     };
-    if (dirMap[e.key]) setDirection(dirMap[e.key]);
+    if (dirMap[e.key]) {
+      const newDir = dirMap[e.key];
+      if (newDir.x !== -direction.x && newDir.y !== -direction.y) {
+        setDirection(newDir);
+      }
+    }
+  };
+
+  // ✅ Touch swipe handlers
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    lastTouchRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (e) => {
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - lastTouchRef.current.x;
+    const dy = touch.clientY - lastTouchRef.current.y;
+
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    let newDir = direction;
+    if (absX > absY) {
+      newDir = dx > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 };
+    } else {
+      newDir = dy > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 };
+    }
+
+    if (newDir.x !== -direction.x && newDir.y !== -direction.y) {
+      setDirection(newDir);
+    }
   };
 
   useEffect(() => {
     document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, []);
+    const board = boardRef.current;
+    board?.addEventListener("touchstart", handleTouchStart, { passive: true });
+    board?.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      board?.removeEventListener("touchstart", handleTouchStart);
+      board?.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [direction]);
 
   useEffect(() => {
     if (isGameOver) return;
@@ -90,7 +130,7 @@ const GameBoard = ({ resetFlag }) => {
         {/* Game Board */}
         <div
           ref={boardRef}
-          className="grid grid-cols-20 grid-rows-20 w-[75vmin] h-[75vmin] bg-neutral-900 border-4 border-neutral-700"
+          className="grid grid-cols-20 grid-rows-20 w-[75vmin] h-[75vmin] bg-neutral-900 border-4 border-neutral-700 touch-none"
         >
           {[...Array(BOARD_SIZE * BOARD_SIZE)].map((_, i) => {
             const x = i % BOARD_SIZE;
@@ -120,13 +160,11 @@ const GameBoard = ({ resetFlag }) => {
             <div className="bg-red-600 text-white text-3xl px-6 py-4 font-jersey">
               Game Over
             </div>
-            
           </div>
         )}
       </div>
     </div>
   );
-  
 };
 
 export default GameBoard;
