@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-6">
-      <nav className="w-full flex items-center justify-between px-12 py-4 bg-black">
+      <nav className="w-full relative flex items-center justify-between px-12 py-4 bg-black">
         <a
           href="https://github.com/hemanthk04/snakegame"
           target="_blank"
@@ -22,7 +22,7 @@ function App() {
           <GithubLogo size={32} weight="fill" />
         </a>
 
-        <h1 className="font-jersey text-white text-4xl sm:text-5xl">
+        <h1 className="absolute left-1/2 -translate-x-1/2 font-jersey text-white text-4xl sm:text-5xl">
           Snake Game
         </h1>
 
