@@ -90,7 +90,7 @@ const GameBoard = ({ resetFlag }) => {
         {/* Game Board */}
         <div
           ref={boardRef}
-          className="grid grid-cols-20 grid-rows-20 w-[80vmin] h-[80vmin] bg-neutral-900 border-4 border-neutral-700"
+          className="grid grid-cols-20 grid-rows-20 w-[75vmin] h-[75vmin] bg-neutral-900 border-4 border-neutral-700"
         >
           {[...Array(BOARD_SIZE * BOARD_SIZE)].map((_, i) => {
             const x = i % BOARD_SIZE;
